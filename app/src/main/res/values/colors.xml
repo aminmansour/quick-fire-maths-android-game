@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#212121</color>
+    <color name="colorPrimaryDark">#181818</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="homeBackground">#0288D1</color>
+    <color name="gameBackground">#ff8604</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="button_color">#d6d6d6</color>
+    <color name="home_bottom_banner">#FFEB3B</color>
+    <color name="title">#0a0a0a</color>
+    <color name="question_text_color">#343433</color>
+    <color name="rules_background">#13608a</color>
+    <color name="game_over_text">#ffffff</color>
+    <color name="game_over_background">#85000000</color>
+</resources>
