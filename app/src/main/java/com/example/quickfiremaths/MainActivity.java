@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView equalSymbol;
     private ValueAnimator slideAnimator;
     private ArrayList<String> sayings;
-    private View rules;
     private ImageView soundButton;
     private boolean soundOn;
     private MusicHelper musicPlayer;
@@ -59,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             + "To show live ads, replace the ad unit ID in res/values/strings.xml with your own ad unit ID.";
     private InterstitialAd mInterstitialAd;
     private int countOfGames;
+    private RelativeLayout rules;
 
 
     @Override
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         width = displayMetrics.widthPixels;
         slideAnimator = new ValueAnimator();
         soundOn = true;
-        rules = findViewById(R.id.rules);
+        rules = (RelativeLayout) findViewById(R.id.rules);
 
         musicPlayer = new MusicHelper(this, this);
 
@@ -127,7 +127,9 @@ public class MainActivity extends AppCompatActivity {
         setAdvert((AdView) findViewById(R.id.rulesAdView));
 
         mInterstitialAd = newInterstitialAd();
-        loadInterstitial();
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mInterstitialAd.loadAd(adRequest);
     }
 
     private void clearBoard() {
@@ -160,20 +162,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showInterstitial() {
-        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+        if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         } else {
-            mInterstitialAd = newInterstitialAd();
-            loadInterstitial();
+            signalGameOverScreen();
+            Log.d("TAG", "The interstitial wasn't loaded yet.");
         }
+
+
     }
 
-    private void loadInterstitial() {
-        // Disable the next level button and load the ad.
-        AdRequest adRequest = new AdRequest.Builder()
-                .setRequestAgent("android_studio:ad_template").build();
-        mInterstitialAd.loadAd(adRequest);
-    }
 
     private void setAdvert(AdView ad) {
         AdView adView = ad;
@@ -188,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         scoreCount = 0;
         score.setText("" + scoreCount);
         questionSymbol.setText("+");
+        loadingBar.setIsFinished(false);
         equalSymbol.setText("=");
         if (view != null) {
             final int resId = getResources().getIdentifier(colors[r.nextInt(colors.length)] + "_background", "drawable", getPackageName());
@@ -276,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
         homeScreen.setLayoutParams(spec);
     }
 
-    private void transitionPageToSide(final RelativeLayout homeScreen, int target) {
+    private void transitionPageToSide(final RelativeLayout homeScreen, final int target) {
         Transition transitionPageFromSide = new AutoTransition();
         transitionPageFromSide.setDuration(500);
         TransitionManager.beginDelayedTransition(global, transitionPageFromSide);
@@ -284,7 +283,39 @@ public class MainActivity extends AppCompatActivity {
                 RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         spec.leftMargin = target;
         homeScreen.setLayoutParams(spec);
+        transitionPageFromSide.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                if(target==0) {
+                    global.addView(home);
+                }else{
+                    global.addView(rules);
+                }
+            }
 
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                if(target==0) {
+                    global.removeView(rules);
+                }else{
+                    global.removeView(home);
+                }
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+            }
+        });
     }
 
     private void transitionPageIn(RelativeLayout homeScreen) {
@@ -360,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
                 countOfGames++;
                 if (countOfGames % 5 == 0) {
                     showInterstitial();
+                    System.out.println("hello123456");
                 } else {
                     signalGameOverScreen();
                 }
@@ -375,6 +407,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signalGameOverScreen() {
+        System.out.println("entered");
         loadingBar.stopTimer();
         updateHighScore();
         slideAnimator.removeAllListeners();

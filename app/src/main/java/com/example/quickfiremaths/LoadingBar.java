@@ -2,6 +2,7 @@ package com.example.quickfiremaths;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.RelativeLayout;
 
@@ -57,6 +58,7 @@ public class LoadingBar implements Animator.AnimatorListener, ValueAnimator.Anim
         if(!isAnswered) {
             activity.signalGameOver();
         }
+        System.out.println("hello1234");
         isAnswered = false;
         loadingBar.setTranslationX(0);
     }
@@ -78,5 +80,10 @@ public class LoadingBar implements Animator.AnimatorListener, ValueAnimator.Anim
 
     public void setPosition(float value){
         loadingBar.setTranslationX(value);
+    }
+
+
+    public void setIsFinished(boolean isFinished){
+        this.isAnswered = isFinished;
     }
 }
